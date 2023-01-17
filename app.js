@@ -1,4 +1,3 @@
-
 /* eslint-disable no-labels */
 
 // factory of the players
@@ -30,10 +29,14 @@ const GameBoard = (function () {
     return newBoard;
   };
   const gameStart = () => {
+    console.log('here',this)
     this.board = initBoard();
   };
   const makeMove = (player, position) => {
-    if (this.board[position[0]][position[1]] !== 'X' && this.board[position[0]][position[1]] !== 'O') {
+    if (
+      this.board[position[0]][position[1]] !== 'X' &&
+      this.board[position[0]][position[1]] !== 'O'
+    ) {
       this.board[position[0]][position[1]] = player.sign;
     }
   };
@@ -45,22 +48,37 @@ const GameBoard = (function () {
   const checkBoard = () => {
     // check horizontal direction
     for (let i = 0; i < 3; i += 1) {
-      if (this.board[i][0] === this.board[i][1] && this.board[i][0] === this.board[i][2]) {
+      if (
+        this.board[i][0] === this.board[i][1] &&
+        this.board[i][0] === this.board[i][2]
+      ) {
         console.log('We got a winner');
       }
     }
     // check vertical direction
     for (let i = 0; i < 3; i += 1) {
-      if (this.board[0][i] === this.board[1][i] && this.board[0][i] === this.board[2][i]) {
+      if (
+        this.board[0][i] === this.board[1][i] &&
+        this.board[0][i] === this.board[2][i]
+      ) {
         console.log('We got a winner');
+        return;
       }
     }
     // check cross-directions
-    if (this.board[0][0] === this.board[1][1] && this.board[0][0] === this.board[2][2]) {
+    if (
+      this.board[0][0] === this.board[1][1] &&
+      this.board[0][0] === this.board[2][2]
+    ) {
       console.log('We got a winner');
+      return;
     }
-    if (this.board[0][2] === this.board[1][1] && this.board[0][2] === this.board[2][0]) {
+    if (
+      this.board[0][2] === this.board[1][1] &&
+      this.board[0][2] === this.board[2][0]
+    ) {
       console.log('We got a winner');
+      return;
     }
 
     // eslint-disable-next-line no-restricted-syntax
@@ -69,10 +87,10 @@ const GameBoard = (function () {
         if (this.board[m][n] === 'O' || this.board[m][n] === 'X') {
           if (n === 2 && m === 2) {
             console.log('It is a tie!!!');
-            break mainLoop;
-          } else {
-            continue;
+            return;
+            // break mainLoop;
           }
+          continue;
         } else {
           break mainLoop;
         }
@@ -92,23 +110,76 @@ const GameBoard = (function () {
 
   // emulating public state
   return {
-    gameStart, boardState, makeMove, checkBoard, renderBoard,
+    gameStart,
+    boardState,
+    makeMove,
+    checkBoard,
+    renderBoard,
+    board
   };
-}());
+})();
 
-player1 = Player('Kriss', 'O');
-player2 = Player('Cross', 'X');
+const GameFlow = (function () {
+  //
+  const controller = new AbortController();
+  let PlayerMode ;
+  console.log(PlayerMode);
+
+  const letStart = document.querySelector('.startButton');
+  
+
+  const start = () => {
+    letStart.addEventListener('click', eventHandler.bind(null,[0,1],['single','multi']) ,{ signal: controller.signal });
+  };
+  
+  // eventListnerSetup
+  function eventHandler(num,modeType) {
+    const mode = document.querySelector('.mode');
+    mode.setAttribute('style', 'display:inline-block');
+    letStart.removeEventListener('click', eventHandler.bind(null,[0,1],['single','multi']));
+    controller.abort();
+    console.log('2:',letStart)
+
+    // eslint-disable-next-line no-use-before-define
+    for (let index = 0; index < num.length; index++) {
+      mode.children[index].addEventListener('click', () => {
+        GameFlow.PlayerMode = modeType[index];
+        console.log(GameFlow.PlayerMode);
+      });
+    }
+  }
+  const checkMode = () =>GameFlow.PlayerMode
+
+  console.log(PlayerMode);
+  return { start, checkMode };
+})();
 
 GameBoard.gameStart();
-GameBoard.makeMove(player1, [0, 0]);
-GameBoard.makeMove(player1, [1, 1]);
-GameBoard.makeMove(player1, [2, 1]);
-GameBoard.makeMove(player1, [0, 2]);
-GameBoard.makeMove(player2, [0, 1]);
-GameBoard.makeMove(player2, [1, 0]);
-GameBoard.makeMove(player2, [2, 0]);
-GameBoard.makeMove(player2, [1, 2]);
-GameBoard.makeMove(player2, [2, 2]);
-GameBoard.boardState();
-GameBoard.checkBoard();
-GameBoard.renderBoard();
+GameFlow.start()
+
+
+// const player1 = Player('Kriss', 'O');
+// const player2 = Player('Cross', 'X');
+
+// GameBoard.gameStart();
+
+// GameBoard.makeMove(player1, [1, 1]);
+// GameBoard.makeMove(player1, [2, 1]);
+// GameBoard.makeMove(player1, [0, 2]);
+// GameBoard.makeMove(player2, [0, 1]);
+// GameBoard.makeMove(player2, [1, 0]);
+// GameBoard.makeMove(player2, [2, 0]);
+// GameBoard.makeMove(player2, [1, 2]);
+// GameBoard.makeMove(player2, [2, 2]);
+// GameBoard.boardState();
+// GameBoard.checkBoard();
+// GameBoard.renderBoard();
+
+const Formatter = (function() {
+  const log = (message) => console.log(`[${Date.now()}] Logger: ${message}`);
+
+  const makeUppercase = (text) => {
+    log('Making uppercase');
+    return text.toUpperCase();
+  };
+})();
