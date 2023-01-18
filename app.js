@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-labels */
 
 // factory of the players
@@ -9,7 +10,7 @@ const Player = (name, sign) => {
 };
 
 const GameBoard = (function () {
-  this.board = 'Start new game';
+  let board = [];
 
   // function to initiate new board
   const initBoard = () => {
@@ -25,32 +26,32 @@ const GameBoard = (function () {
       }
     }
     console.log(newBoard);
-    this.board = newBoard;
+    board = newBoard;
     return newBoard;
   };
   const gameStart = () => {
-    console.log('here',this)
-    this.board = initBoard();
+    console.log('here', this);
+    board = initBoard();
   };
   const makeMove = (player, position) => {
     if (
-      this.board[position[0]][position[1]] !== 'X' &&
-      this.board[position[0]][position[1]] !== 'O'
+      board[position[0]][position[1]] !== 'X' &&
+      board[position[0]][position[1]] !== 'O'
     ) {
-      this.board[position[0]][position[1]] = player.sign;
+      board[position[0]][position[1]] = player.sign;
     }
   };
   const boardState = () => {
     //
-    console.log('Board state: ', this.board.toString());
-    return this.board;
+    console.log('Board state: ', board.toString());
+    return board;
   };
   const checkBoard = () => {
     // check horizontal direction
     for (let i = 0; i < 3; i += 1) {
       if (
-        this.board[i][0] === this.board[i][1] &&
-        this.board[i][0] === this.board[i][2]
+        board[i][0] === board[i][1] &&
+        board[i][0] === board[i][2]
       ) {
         console.log('We got a winner');
       }
@@ -58,8 +59,8 @@ const GameBoard = (function () {
     // check vertical direction
     for (let i = 0; i < 3; i += 1) {
       if (
-        this.board[0][i] === this.board[1][i] &&
-        this.board[0][i] === this.board[2][i]
+        board[0][i] === board[1][i] &&
+        board[0][i] === board[2][i]
       ) {
         console.log('We got a winner');
         return;
@@ -67,15 +68,15 @@ const GameBoard = (function () {
     }
     // check cross-directions
     if (
-      this.board[0][0] === this.board[1][1] &&
-      this.board[0][0] === this.board[2][2]
+      board[0][0] === board[1][1] &&
+      board[0][0] === board[2][2]
     ) {
       console.log('We got a winner');
       return;
     }
     if (
-      this.board[0][2] === this.board[1][1] &&
-      this.board[0][2] === this.board[2][0]
+      board[0][2] === board[1][1] &&
+      board[0][2] === board[2][0]
     ) {
       console.log('We got a winner');
       return;
@@ -84,7 +85,7 @@ const GameBoard = (function () {
     // eslint-disable-next-line no-restricted-syntax
     mainLoop: for (let m = 0; m < 3; m += 1) {
       for (let n = 0; n < 3; n += 1) {
-        if (this.board[m][n] === 'O' || this.board[m][n] === 'X') {
+        if (board[m][n] === 'O' || board[m][n] === 'X') {
           if (n === 2 && m === 2) {
             console.log('It is a tie!!!');
             return;
@@ -103,7 +104,7 @@ const GameBoard = (function () {
         // make string with id to query element
         const id = `#id-${i}-${j}`;
         const element = document.querySelector(id);
-        element.textContent = this.board[i][j];
+        element.textContent = board[i][j];
       }
     }
   };
@@ -120,43 +121,125 @@ const GameBoard = (function () {
 })();
 
 const GameFlow = (function () {
-  //
+  // setup for eventlistener removal
   const controller = new AbortController();
-  let PlayerMode ;
-  console.log(PlayerMode);
+  const controller2 = new AbortController();
+  const controller3 = new AbortController();
 
+  // html element grabbing
   const letStart = document.querySelector('.startButton');
-  
+  const players = document.querySelector('.players');
+  const mode = document.querySelector('.mode');
+  const playerSings = document.querySelectorAll('.player button');
+
+  let PlayerMode;
+  const playerSignChoice = ['', '', '', ''];
 
   const start = () => {
-    letStart.addEventListener('click', eventHandler.bind(null,[0,1],['single','multi']) ,{ signal: controller.signal });
+    // choose the mode of the game
+    letStart.addEventListener(
+      'click',
+      eventHandler.bind(null, [0, 1], ['single', 'multi']),
+      { signal: controller.signal }
+    );
   };
-  
-  // eventListnerSetup
-  function eventHandler(num,modeType) {
-    const mode = document.querySelector('.mode');
+
+  // event Listener Setup
+  function eventHandler(num, modeType) {
+    // make mode div visible
     mode.setAttribute('style', 'display:inline-block');
-    letStart.removeEventListener('click', eventHandler.bind(null,[0,1],['single','multi']));
+    // letStart.removeEventListener('click', eventHandler.bind(null,[0,1],['single','multi'])); //this is not working
+    // deleting listener from start button
     controller.abort();
-    console.log('2:',letStart)
+    console.log('2:', letStart);
 
     // eslint-disable-next-line no-use-before-define
     for (let index = 0; index < num.length; index++) {
-      mode.children[index].addEventListener('click', () => {
-        GameFlow.PlayerMode = modeType[index];
-        console.log(GameFlow.PlayerMode);
-      });
+      // eslint-disable-next-line no-loop-func
+      mode.children[index].addEventListener(
+        'click',
+        (e) => {
+          GameFlow.PlayerMode = modeType[index];
+          e.target.setAttribute(
+            'style',
+            ' background-color:  hsl(180, 100%, 27%);'
+          );
+          controller2.abort();
+
+          // make player div visible
+          players.setAttribute('style', 'display:flex');
+          console.log(GameFlow.PlayerMode);
+
+          Array.from(playerSings).forEach((element) =>
+            element.addEventListener(
+              'click',
+              (e2) => {
+
+                // mark the players choice on the page and automatically mark other player sigh
+                // reset the previous player choice
+                Array.from(playerSings).forEach((element2) =>
+                  element2.setAttribute('style', 'background-color: azure')
+                );
+
+                if (e2.target.id === 'sign1') {
+                  changeButton (e2.target);
+                  const player2 = document.querySelector('#sign4');
+                  changeButton(player2);
+                  wrapPlayer (e2,player2)
+
+                } else if (e2.target.id === 'sign2') {
+                  changeButton (e2.target);
+                  const player2 = document.querySelector('#sign3');
+                  changeButton(player2);
+                  wrapPlayer (e2,player2)
+
+                } else if (e2.target.id === 'sign3') {
+                  changeButton (e2.target);
+                  const player2 = document.querySelector('#sign2');
+                  changeButton(player2);
+                  wrapPlayer (e2,player2);
+
+                } else if (e2.target.id === 'sign4') {
+                  changeButton (e2.target);
+                  const player2 = document.querySelector('#sign1');
+                  changeButton(player2);
+                  wrapPlayer (e2,player2);
+                }
+                console.log(playerSignChoice);
+
+                // function to reduce redundancy for injection above
+                function wrapPlayer (event,item) {
+                  playerSignChoice[0]=event.target.parentElement.firstElementChild.value;
+                  playerSignChoice[1]=event.target.innerText;
+                  playerSignChoice[2]=item.parentElement.firstElementChild.value;
+                  playerSignChoice[3]=item.innerText;
+                };
+
+                // function to reduce redundancy for injection above
+                function changeButton (event) {
+                  event.setAttribute(
+                    'style',
+                    ' background-color:  hsl(180, 100%, 27%);');
+                }
+                // choices can be change until the game is begin. Then the event l. will be aborted.
+              },
+              { signal: controller3.signal }
+            )
+          );
+        },
+        { signal: controller2.signal }
+      );
     }
   }
-  const checkMode = () =>GameFlow.PlayerMode
+
+  const checkMode = () => GameFlow.PlayerMode;
 
   console.log(PlayerMode);
-  return { start, checkMode };
+  return { start, checkMode, playerSignChoice };
 })();
 
 GameBoard.gameStart();
-GameFlow.start()
-
+GameFlow.start();
 
 // const player1 = Player('Kriss', 'O');
 // const player2 = Player('Cross', 'X');
@@ -174,12 +257,3 @@ GameFlow.start()
 // GameBoard.boardState();
 // GameBoard.checkBoard();
 // GameBoard.renderBoard();
-
-const Formatter = (function() {
-  const log = (message) => console.log(`[${Date.now()}] Logger: ${message}`);
-
-  const makeUppercase = (text) => {
-    log('Making uppercase');
-    return text.toUpperCase();
-  };
-})();
