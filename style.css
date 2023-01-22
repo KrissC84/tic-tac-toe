@@ -133,7 +133,6 @@ main {
 .result {
   position: absolute;
   top: 0;
-  border: 1px solid red;
 }
 
 .result h2 {

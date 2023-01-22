@@ -164,6 +164,8 @@ const GameFlow = (function () {
 
   // event Listener Setup
   function eventHandler(num, modeType) {
+    // 
+    console.log('Start')
     // make mode div visible
     mode.setAttribute('style', 'display:inline-block');
     // letStart.removeEventListener('click', eventHandler.bind(null,[0,1],['single','multi'])); //this is not working
@@ -293,59 +295,55 @@ const GameFlow = (function () {
     console.log(firstPlayerMove);
     if (firstPlayerMove === true) {
       console.log('first player');
-      firstPlayerMove = false;
       if (e.target.textContent === '') {
         // e.target.textContent = GameFlow.Player1.sign;
+        
+        firstPlayerMove = false;
         pushToBoard(e, GameFlow.Player1);
         GameBoard.renderBoard();
         // eslint-disable-next-line prefer-const
         let result = GameBoard.checkBoard();
         if (result === 'X' || result === 'O') {
-          controller4.abort();
-          resultInHtml.textContent=`We got a  winner! Congratulations to ${GameFlow.Player1.name}`
-          GameBoard.gameStart();
-          GameFlow.start();
-          GameBoard.renderBoard();
+          endStateOfPlay (controller4,`We got a  winner! Congratulations to ${GameFlow.Player1.name}`);
         } else if (result === 'tie') {
-          controller4.abort();
-          resultInHtml.textContent='It is a tie! Try one more time. '
-          GameBoard.gameStart();
-          GameFlow.start();
-          GameBoard.renderBoard();
+          endStateOfPlay (controller4,'It is a tie! Try one more time. ')
         }
       }
     } else {
       console.log('second player');
-      firstPlayerMove = true;
       if (e.target.textContent === '') {
         // e.target.textContent = GameFlow.Player2.sign;
+        firstPlayerMove = true;
         pushToBoard(e, GameFlow.Player2);
         GameBoard.renderBoard();
         // eslint-disable-next-line prefer-const
         let result = GameBoard.checkBoard();
         if (result === 'X' || result === 'O') {
-          controller4.abort();
-          resultInHtml.textContent=`We got a  winner! Congratulations to ${GameFlow.Player1.name}`
-          GameBoard.gameStart();
-          GameFlow.start();
-          GameBoard.renderBoard();
+          endStateOfPlay (controller4,`We got a  winner! Congratulations to ${GameFlow.Player2.name}`)
         } else if (result === 'tie') {
-          controller4.abort();
-          resultInHtml.textContent='It is a tie! Try one more time. ';
-          
-          GameBoard.gameStart();
-          GameFlow.start();
-          GameBoard.renderBoard();
+          endStateOfPlay (controller4,'It is a tie! Try one more time. ')
         }
       }
     }
   }
+  const endStateOfPlay = (_controller,massage)=>{
+    _controller.abort();
+    resultInHtml.textContent=massage;
+    playNewRound();
+  }
+
   // refreshing board object
   const pushToBoard = (e, player) => {
     console.log(player);
     console.log(e.target.id[3], e.target.id[5]);
     GameBoard.makeMove(player, [e.target.id[3], e.target.id[5]]);
   };
+  const playNewRound = () => {
+    letStart.setAttribute('value','Play Again');
+    letStart.addEventListener(
+      'click',() => {document. location. reload()}
+    );
+  }
 
   console.log(PlayerMode);
 
