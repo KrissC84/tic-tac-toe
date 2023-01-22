@@ -7,7 +7,6 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
   background-color: hsla(180, 68%, 46%, 0.421);
 }
 header {
@@ -25,7 +24,16 @@ footer {
   min-height: 4rem;
   background-color: azure;
 }
+footer {
+  font-style: oblique;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 main {
+  border-radius: 40%;
   position: relative;
   min-height: calc(100vh - 12rem);
   display: flex;
@@ -37,6 +45,7 @@ main {
     rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 .table {
+  border-radius: 35%;
   padding: 5px;
   background-color: aqua;
   width: min(50vw, 450px);
@@ -52,7 +61,9 @@ main {
 }
 
 .tile {
-  font-size: min(10vw, min(14vw, 120px));
+  border-radius: 35%;
+  font-family: 'Brush Script MT' ,Georgia, 'Times New Roman', Times, serif;
+  font-size: min(9vw, min(14vw, 110px));
   background-color: hsl(180, 100%, 27%);
   display: flex;
   justify-content: center;
@@ -132,10 +143,50 @@ main {
 
 .result {
   position: absolute;
-  top: 0;
+  top: 10px;
 }
 
 .result h2 {
   padding: 0;
   margin: 0;
+  color:#fc0fc0;
+  font-size: 1.2rem;
+}
+
+.gradient-border {
+  --borderWidth: 3px;
+  background: #1d1f2033;
+  position: relative;
+  border-radius: var(--borderWidth);
+}
+.gradient-border:after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  border-radius: calc(2 * var(--borderWidth));
+  z-index: -1;
+  animation: animatedgradient 4s ease alternate infinite;
+  background-size: 300% 300%;
+}
+
+@keyframes animatedgradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+
+.credits {
+  font-size: 10px;
+  text-align: justify;
 }

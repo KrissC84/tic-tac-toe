@@ -54,7 +54,7 @@ const GameBoard = (function () {
         board[i][0] === board[i][2] &&
         board[i][0] !== ''
       ) {
-        console.log('We got a winner',board[i][0]);
+        console.log('We got a winner', board[i][0]);
         return board[i][0];
       }
     }
@@ -65,7 +65,7 @@ const GameBoard = (function () {
         board[0][i] === board[2][i] &&
         board[0][i] !== ''
       ) {
-        console.log('We got a winner',board[0][i]);
+        console.log('We got a winner', board[0][i]);
         return board[0][i];
       }
     }
@@ -75,15 +75,15 @@ const GameBoard = (function () {
       board[0][0] === board[2][2] &&
       board[0][0] !== ''
     ) {
-      console.log('We got a winner',board[0][0]);
-      return board[0][0] ;
+      console.log('We got a winner', board[0][0]);
+      return board[0][0];
     }
     if (
       board[0][2] === board[1][1] &&
       board[0][2] === board[2][0] &&
       board[0][2] !== ''
     ) {
-      console.log('We got a winner',board[0][2]);
+      console.log('We got a winner', board[0][2]);
       return board[0][2];
     }
 
@@ -136,13 +136,13 @@ const GameFlow = (function () {
   const controller3 = new AbortController();
   const controller4 = new AbortController();
 
-  // html element grabbing
+  // html element grabbing - cache DOM
   const letStart = document.querySelector('.startButton');
   const players = document.querySelector('.players');
   const mode = document.querySelector('.mode');
   const playerSings = document.querySelectorAll('.player button');
   const boardTiles = document.querySelectorAll('.table .tile');
-  const resultInHtml =  document.querySelector('.result>h2');
+  const resultInHtml = document.querySelector('.result>h2');
 
   let PlayerMode;
   const playerSignChoice = ['', '', '', ''];
@@ -285,7 +285,7 @@ const GameFlow = (function () {
       };
       // adding ev.listeners to the tiles
       Array.from(boardTiles).forEach((element3) => {
-        element3.addEventListener('click', gameBegin, {signal: controller4.signal});
+        element3.addEventListener('click', gameBegin, { signal: controller4.signal });
       });
     }
   };
@@ -297,16 +297,16 @@ const GameFlow = (function () {
       console.log('first player');
       if (e.target.textContent === '') {
         // e.target.textContent = GameFlow.Player1.sign;
-        
+
         firstPlayerMove = false;
         pushToBoard(e, GameFlow.Player1);
         GameBoard.renderBoard();
         // eslint-disable-next-line prefer-const
         let result = GameBoard.checkBoard();
         if (result === 'X' || result === 'O') {
-          endStateOfPlay (controller4,`We got a  winner! Congratulations to ${GameFlow.Player1.name}`);
+          endStateOfPlay(controller4, `We got a  winner! Congratulations to ${GameFlow.Player1.name}`);
         } else if (result === 'tie') {
-          endStateOfPlay (controller4,'It is a tie! Try one more time. ')
+          endStateOfPlay(controller4, 'It is a tie! Try one more time. ')
         }
       }
     } else {
@@ -319,16 +319,17 @@ const GameFlow = (function () {
         // eslint-disable-next-line prefer-const
         let result = GameBoard.checkBoard();
         if (result === 'X' || result === 'O') {
-          endStateOfPlay (controller4,`We got a  winner! Congratulations to ${GameFlow.Player2.name}`)
+          endStateOfPlay(controller4, `We got a  winner! Congratulations to ${GameFlow.Player2.name}`)
         } else if (result === 'tie') {
-          endStateOfPlay (controller4,'It is a tie! Try one more time. ')
+          endStateOfPlay(controller4, 'It is a tie! Try one more time. ')
         }
       }
     }
   }
-  const endStateOfPlay = (_controller,massage)=>{
+  // end state of game wrapped into small function
+  const endStateOfPlay = (_controller, massage) => {
     _controller.abort();
-    resultInHtml.textContent=massage;
+    resultInHtml.textContent = massage;
     playNewRound();
   }
 
@@ -338,10 +339,11 @@ const GameFlow = (function () {
     console.log(e.target.id[3], e.target.id[5]);
     GameBoard.makeMove(player, [e.target.id[3], e.target.id[5]]);
   };
+
   const playNewRound = () => {
-    letStart.setAttribute('value','Play Again');
+    letStart.setAttribute('value', 'Play Again');
     letStart.addEventListener(
-      'click',() => {document. location. reload()}
+      'click', () => { document.location.reload() }
     );
   }
 
